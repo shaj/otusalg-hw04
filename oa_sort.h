@@ -9,6 +9,9 @@ namespace otusalg
 {
 
 
+/**
+   Сортировка вставкой на С
+ */
 template <typename T>
 int insertion_sort(std::vector<T> &v)
 {
@@ -28,6 +31,9 @@ int insertion_sort(std::vector<T> &v)
 	return 0;
 }
 
+/**
+ Сортировка вставкой на С++
+ */
 template <typename RandomAccessIterator, typename Compare>
 void ins_sort(RandomAccessIterator first, RandomAccessIterator last, Compare comp)
 {
@@ -49,14 +55,33 @@ void shell_sort( RandomAccessIterator first, RandomAccessIterator last, Compare 
 }
 
 
-template <typename RandomAccessIterator, typename Compare, typename StepIterator>
-void shell_sort_k(RandomAccessIterator first, RandomAccessIterator last, Compare comp, StepIterator steps)
+/**
+ Сортировка Шелла на С
+ */
+template <typename T>
+int shell_sort_c(std::vector<T> &v)
 {
-	for( typename std::iterator_traits< RandomAccessIterator >::difference_type d = ( last - first ) / 2; d != 0; d /= 2 )
-		for( RandomAccessIterator i = first + d; i != last; ++i )
-			for( RandomAccessIterator j = i; j - first >= d && comp( *j, *( j - d ) ); j -= d )
-				std::swap( *j, *( j - d ) );
+	for(int d=(v.size()/2); d!=0; d /= 2)
+		for(int i=d; i < v.size(); i++)
+			for(int j=i; j >= d && (v[j] < v[j-d]); j -= d)
+				std::swap(v[j], v[j-d]);
 }
+
+
+/**
+ Сортировка Шелла на С без вычисления размера промежутка.
+ Количество и значения промежутков должны быть вычислены заранее
+ в зависимости от размера массива данных
+ */
+template <typename T>
+int shell_sort_ck(std::vector<T> &v, const std::vector<int> &steps)
+{
+	for(int d: steps)
+		for(int i=d; i < v.size(); i++)
+			for(int j=i; j >= d && (v[j] < v[j-d]); j -= d)
+				std::swap(v[j], v[j-d]);
+}
+
 
 
 

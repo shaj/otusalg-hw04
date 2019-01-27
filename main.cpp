@@ -4,8 +4,8 @@
 #include <chrono>
 #include <memory>
 #include <algorithm>
-#include <iterator>
 #include <functional>
+#include <iterator>
 #include <fstream>
 
 #include "oa_sort.h"
@@ -38,17 +38,6 @@ void read_data(std::istream &is, std::vector<int> &v)
 	{
 		v.emplace_back(std::stoi(line));
 	}
-}
-
-void test_vector(const std::vector<int> &v)
-{
-	int cnt = 0;
-	for(auto it = v.begin() + 1; it != v.end(); it++)
-	{
-		if(*it < *(it-1)) cnt++;
-	}
-	if(cnt) std::cout << "array is NOT sorted\n";
-	else std::cout << "array is sorted" << std::endl;
 }
 
 int main(int argc, char const *argv[])
@@ -101,23 +90,28 @@ int main(int argc, char const *argv[])
 	    {
 	    	read_data(fs, v);
 	    	fs.close();
-	    	test_vector(v);
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
 	    	std::cout << "data size: " << v.size() << "\n";
 	    	std::cout << "insertion_sort: " << measure<std::chrono::microseconds>::execution([&]()
 	    	{
 	    		otusalg::insertion_sort(v);
 	    	}) << " us\n";
-	    	test_vector(v);
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
 
 
-	    	fs.open(argv[1]);
-	    	read_data(fs, v);
-	    	fs.close();
-	    	std::cout << "ins_sort: " << measure<std::chrono::microseconds>::execution([&]()
-	    	{
-	    		otusalg::ins_sort(v.begin(), v.end(), std::less<int>());
-	    	}) << " us\n";
-	    	test_vector(v);
+	    	// fs.open(argv[1]);
+	    	// read_data(fs, v);
+	    	// fs.close();
+	    	// std::cout << "ins_sort: " << measure<std::chrono::microseconds>::execution([&]()
+	    	// {
+	    	// 	otusalg::ins_sort(v.begin(), v.end(), std::less<int>());
+	    	// }) << " us\n";
+	    	// if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	// else std::cout << "vector NOT sorted\n";
+	    	// std::cout << std::endl;
 
 
 	    	fs.open(argv[1]);
@@ -127,7 +121,124 @@ int main(int argc, char const *argv[])
 	    	{
 	    		otusalg::shell_sort(v.begin(), v.end(), std::less<int>());
 	    	}) << " us\n";
-	    	test_vector(v);
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	std::cout << "shell_sort_c: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		otusalg::shell_sort_c(v);
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	std::cout << "std::sort: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		std::sort(v.begin(), v.end(), std::less<int>());
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+
+
+	    	std::cout << "\nDifferent sequence of steps:\n";
+	    	std::vector<int> d;
+
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	for(int i=v.size()/2; i!=0; i /= 2) d.emplace_back(i);
+			std::copy(d.begin(), d.end(), std::ostream_iterator<int>(std::cout, " "));
+			std::cout << "\n";
+
+	    	std::cout << "shell_sort_ck steps d[1]=N/2; d[i]=d[i-1]/2: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		otusalg::shell_sort_ck(v, d);
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	d.clear();
+	    	for(int i=1; ; i++)
+    		{
+    			int p = std::pow(2, i) - 1;
+    			if(p > v.size()) break;
+    			d.emplace_back(p);
+    		}
+    		std::reverse(d.begin(), d.end());
+			std::copy(d.begin(), d.end(), std::ostream_iterator<int>(std::cout, " "));
+			std::cout << "\n";
+
+	    	std::cout << "shell_sort_ck steps 2**i-1: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		otusalg::shell_sort_ck(v, d);
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+	    	
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	d.clear();
+	    	for(int i=0; ; i++)
+    		{
+    			int p = std::pow(2, i);
+    			if((p > v.size())) break;
+    			d.emplace_back(p);
+    		}
+    		std::reverse(d.begin(), d.end());
+			std::copy(d.begin(), d.end(), std::ostream_iterator<int>(std::cout, " "));
+			std::cout << "\n";
+
+	    	std::cout << "shell_sort_ck steps 2**i: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		otusalg::shell_sort_ck(v, d);
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
+
+
+	    	fs.open(argv[1]);
+	    	read_data(fs, v);
+	    	fs.close();
+	    	d.clear();
+	    	d.push_back(1750);
+	    	d.push_back(701);
+	    	d.push_back(301);
+	    	d.push_back(132);
+	    	d.push_back(57);
+	    	d.push_back(23);
+	    	d.push_back(10);
+	    	d.push_back(4);
+	    	d.push_back(1);
+			std::copy(d.begin(), d.end(), std::ostream_iterator<int>(std::cout, " "));
+			std::cout << "\n";
+
+	    	std::cout << "shell_sort_ck steps Marcin Ciura: " << measure<std::chrono::microseconds>::execution([&]()
+	    	{
+	    		otusalg::shell_sort_ck(v, d);
+	    	}) << " us\n";
+	    	if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+	    	else std::cout << "vector NOT sorted\n";
+	    	std::cout << std::endl;
 
 
 	    }

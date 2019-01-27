@@ -59,6 +59,27 @@ void shell_sort_k(RandomAccessIterator first, RandomAccessIterator last, Compare
 }
 
 
+template <typename T>
+int shell_sort_c(std::vector<T> &v)
+{
+	for(int d=(v.size()/2); d!=0; d /= 2)
+		for(int i=d; i < v.size(); i++)
+			for(int j=i; j >= d && (v[j] < v[j-d]); j -= d)
+				std::swap(v[j], v[j-d]);
+}
+
+
+template <typename T>
+int shell_sort_ck(std::vector<T> &v, const std::vector<int> &steps)
+{
+	for(int d: steps)
+		for(int i=d; i < v.size(); i++)
+			for(int j=i; j >= d && (v[j] < v[j-d]); j -= d)
+				std::swap(v[j], v[j-d]);
+}
+
+
+
 
 } // namespace otusalg
 

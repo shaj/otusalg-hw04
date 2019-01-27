@@ -70,6 +70,18 @@ int main(int argc, char const *argv[])
 			fs.open(argv[1]);
 			read_data(fs, v);
 			fs.close();
+			std::cout << "ins_sort: " << measure<std::chrono::microseconds>::execution([&]()
+			{
+				otusalg::ins_sort(v.begin(), v.end(), std::less<int>());
+			}) << " us\n";
+			if(std::is_sorted(v.begin(), v.end())) std::cout << "vector sorted\n";
+			else std::cout << "vector NOT sorted\n";
+			std::cout << std::endl;
+
+
+			fs.open(argv[1]);
+			read_data(fs, v);
+			fs.close();
 			std::cout << "shell_sort: " << measure<std::chrono::microseconds>::execution([&]()
 			{
 				otusalg::shell_sort(v.begin(), v.end(), std::less<int>());
